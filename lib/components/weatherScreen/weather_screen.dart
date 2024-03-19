@@ -14,7 +14,7 @@ class WeatherScreen extends StatefulWidget {
       required this.getLocation,
       required this.getForecasts,
       required this.getForecastsHourly,
-      required this.setLocation});
+      required this.setLocation, required List<WeatherForecast> Function() getForecastsWeekly});
 
   @override
   State<WeatherScreen> createState() => _WeatherScreenState();

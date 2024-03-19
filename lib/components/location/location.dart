@@ -193,11 +193,11 @@ class _LocationState extends State<Location> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             LocationText(
-                labelText: "City", width: 80.0, controller: cityController),
+                labelText: "City", width: 60.0, controller: cityController),
             LocationText(
-                labelText: "State", width: 60.0, controller: stateController),
+                labelText: "State", width: 80.0, controller: stateController),
             LocationText(
-                labelText: "Zip", width: 70.0, controller: zipController)
+                labelText: "Zip", width: 60.0, controller: zipController)
           ],
         ),
         ElevatedButton(

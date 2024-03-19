@@ -6,6 +6,7 @@ import 'models/user_location.dart';
 import 'components/weatherScreen/weather_screen.dart';
 import 'models/weather_forecast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 const sqlCreateDatabase = 'assets/sql/create.sql';
 
@@ -25,14 +26,20 @@ class MyApp extends StatelessWidget {
         builder: (_, mode, __) {
           return MaterialApp(
             title: 'CS 492 Weather App',
-            theme: ThemeData.light(),
+            theme: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: Colors.orange,
+              ),
+            ),
             darkTheme: ThemeData.dark(),
+            
             themeMode: mode,
-            home: MyHomePage(title: "CS492 Weather App", notifier: _notifier),
+            home: MyHomePage(title: "Getchya Weather Here", notifier: _notifier),
           );
         });
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -47,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<UserLocation> locations = [];
   List<WeatherForecast> _forecasts = [];
   List<WeatherForecast> _forecastsHourly = [];
+  List<WeatherForecast> _forecastsWeekly = [];
   UserLocation? _location;
 
   void setLocation(UserLocation location) async {
@@ -67,9 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // We collect both the twice-daily forecasts and the hourly forecasts
       List<WeatherForecast> forecasts = await getWeatherForecasts(_location!, false);
       List<WeatherForecast> forecastsHourly = await getWeatherForecasts(_location!, true);
+      List<WeatherForecast> forecastsWeekly = await getWeatherForecasts(_location!, true);
       setState(() {
         _forecasts = forecasts;
         _forecastsHourly = forecastsHourly;
+        _forecastsWeekly = forecastsWeekly;
       });
     }
   }
@@ -81,6 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
   List<WeatherForecast> getForecastsHourly() {
     return _forecastsHourly;
   }
+
+  List<WeatherForecast> getForecastsWeekly() {
+    return _forecastsWeekly;
+  }
+
 
 
   UserLocation? getLocation() {
@@ -142,8 +157,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Row(
+          children: [
+            Icon(
+              WeatherIcons.day_sunny,
+              color: Colors.white
+              ),
+            SizedBox(width: 8),
+            Text(widget.title),
+          ],
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -156,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
           getLocation: getLocation,
           getForecasts: getForecasts,
           getForecastsHourly: getForecastsHourly,
+          getForecastsWeekly: getForecastsWeekly,
           setLocation: setLocation),
       endDrawer: Drawer(
         child: settingsDrawer(),
@@ -169,8 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(_light ? "Light Mode" : "Dark Mode",
-              style: Theme.of(context).textTheme.labelLarge),
+          Text(_light ? "Light Mode" : "Dark Mode"),
           Transform.scale(
             scale: 0.5,
             child: Switch(
@@ -217,7 +241,6 @@ class SettingsHeaderText extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: Text(
         text,
-        style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
   }
